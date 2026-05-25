@@ -61,7 +61,7 @@ except Exception:
 
 CONFIG_PATH = Path(sys.executable).parent / "config.json" if getattr(sys, 'frozen', False) else Path(__file__).parent / "config.json"
 DEFAULT_BASE_URL = "https://api.qcode.cc/qcode-img/v1"
-VERSION = "1.3"
+VERSION = "1.0.1"
 MAX_FILE_SIZE = 25 * 1024 * 1024
 IMAGE_FILTER = "Images (*.png *.jpg *.jpeg *.webp)"
 

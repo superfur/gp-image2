@@ -59,9 +59,9 @@ except Exception:
     HAS_FLUENT = False
 
 
-CONFIG_PATH = Path(__file__).parent / "config.json"
+CONFIG_PATH = Path(sys.executable).parent / "config.json" if getattr(sys, 'frozen', False) else Path(__file__).parent / "config.json"
 DEFAULT_BASE_URL = "https://api.qcode.cc/qcode-img/v1"
-VERSION = "1.1"
+VERSION = "1.3"
 MAX_FILE_SIZE = 25 * 1024 * 1024
 IMAGE_FILTER = "Images (*.png *.jpg *.jpeg *.webp)"
 

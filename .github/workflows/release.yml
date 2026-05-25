@@ -7,13 +7,32 @@ on:
 
 jobs:
   build:
-    strategy:
-      fail-fast: false
+    permissions:
+      contents: write
     runs-on: windows-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Delete old release if exists
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/tags/$TAG" | \
+            python -c "import sys,json; print(json.load(sys.stdin)['id'])" 2>/dev/null || true)
+          if [ -n "$RELEASE_ID" ]; then
+            echo "Deleting existing release: $RELEASE_ID"
+            curl -s -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID"
+            echo "Deleting tag: $TAG"
+            curl -s -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/$GITHUB_REPOSITORY/git/refs/tags/$TAG"
+          else
+            echo "No existing release found for tag $TAG"
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -21,8 +40,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Install PyInstaller
         run: pip install pyinstaller

@@ -9,7 +9,7 @@ a = Analysis(
     ['gpt_image2_qt.py'],
     pathex=[],
     binaries=[],
-    datas=[('config.json', '.')],
+    datas=[],
     hiddenimports=[
         'openai',
         'PIL._imaging',

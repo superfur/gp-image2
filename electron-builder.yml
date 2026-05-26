@@ -23,7 +23,7 @@ mac:
       arch:
         - x64
         - arm64
-  artifactName: ${productName}-${version}-mac.${ext}
+  artifactName: ${productName}-${version}-${arch}-mac.${ext}
 
 linux:
   target:

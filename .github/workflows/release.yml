@@ -18,18 +18,16 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        working-directory: studio
         run: bun install
 
       - name: Build Windows
-        working-directory: studio
         run: bun run build:win
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-exe
-          path: studio/release/*.exe
+          path: release/*.exe
 
   build-mac:
     permissions:
@@ -43,18 +41,16 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        working-directory: studio
         run: bun install
 
       - name: Build macOS
-        working-directory: studio
         run: bun run build:mac
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: mac-dmg
-          path: studio/release/*.dmg
+          path: release/*.dmg
 
   create-release:
     needs: [build-windows, build-mac]

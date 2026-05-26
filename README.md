@@ -30,7 +30,6 @@ Download the latest release for your platform from the [Releases page](https://g
 Or run from source:
 
 ```bash
-cd studio
 bun install
 bun run dev
 ```
@@ -150,3 +149,4 @@ Set `timeout >= 180s` in SDK calls.
 ## License
 
 MIT
+

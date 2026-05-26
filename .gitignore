@@ -17,7 +17,7 @@ Thumbs.db
 config.json
 
 # Electron Studio
-studio/node_modules/
-studio/dist/
-studio/dist-electron/
-studio/release/
+node_modules/
+dist/
+dist-electron/
+release/

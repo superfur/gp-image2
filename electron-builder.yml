@@ -1,6 +1,5 @@
 appId: com.gptimage2.studio
 productName: gpt-image-2 Studio
-publish: never
 
 directories:
   output: release

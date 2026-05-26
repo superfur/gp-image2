@@ -6,52 +6,79 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  build-windows:
     permissions:
       contents: write
     runs-on: windows-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Delete old release if exists
-        shell: pwsh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          $tag = "${env:GITHUB_REF}".Replace("refs/tags/", "")
-          Write-Host "Checking existing release for tag: $tag"
-
-          gh release view $tag --repo $env:GITHUB_REPOSITORY *> $null
-          if ($LASTEXITCODE -eq 0) {
-            Write-Host "Deleting existing release and tag: $tag"
-            gh release delete $tag --repo $env:GITHUB_REPOSITORY --yes --cleanup-tag
-          } else {
-            Write-Host "No existing release found for tag: $tag"
-          }
-          exit 0
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        working-directory: studio
+        run: bun install
 
-      - name: Install PyInstaller
-        run: pip install pyinstaller
+      - name: Build Windows
+        working-directory: studio
+        run: bun run build:win
 
-      - name: Build with PyInstaller
-        run: pyinstaller gpt_image2_qt.spec --noconfirm
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: studio/release/*.exe
 
-      - name: Compress build output
-        run: powershell Compress-Archive -Path "dist/gpt-image-2-studio" -DestinationPath "gpt-image-2-studio-win.zip" -Force
+  build-mac:
+    permissions:
+      contents: write
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        working-directory: studio
+        run: bun install
+
+      - name: Build macOS
+        working-directory: studio
+        run: bun run build:mac
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-dmg
+          path: studio/release/*.dmg
+
+  create-release:
+    needs: [build-windows, build-mac]
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-exe
+          path: artifacts/win
+
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mac-dmg
+          path: artifacts/mac
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: gpt-image-2-studio-win.zip
+          files: |
+            artifacts/win/*
+            artifacts/mac/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

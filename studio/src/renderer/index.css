@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Microsoft YaHei', 'Segoe UI', system-ui, sans-serif;
+  background: #F3F6FB;
+  color: #0F172A;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* DropZone drag states */
+.drop-active {
+  background: #E8F1FF !important;
+  border-color: #2563EB !important;
+}
+
+/* Input/select/textarea */
+input, select, textarea {
+  font-family: inherit;
+}
